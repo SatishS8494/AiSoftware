@@ -78,7 +78,18 @@ def _run_node(project_path: Path) -> ExecutionResult:
     if r.returncode != 0:
         return _install_result_from("npm install", r)
 
-    r = _run_with_timeout("npm start", cwd=project_path, shell=True)
+    # Prefer `npm run build` when available (SPAs / bundlers) so we get a real pass/fail
+    # instead of hanging on a long-running dev server.
+    command = "npm start"
+    try:
+        import json
+        scripts = json.loads(pkg.read_text(encoding="utf-8")).get("scripts", {}) or {}
+        if "build" in scripts:
+            command = "npm run build"
+    except (OSError, ValueError):
+        pass
+
+    r = _run_with_timeout(command, cwd=project_path, shell=True)
     return ExecutionResult(
         success=r.returncode == 0,
         stdout=r.stdout,
