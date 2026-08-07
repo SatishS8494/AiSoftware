@@ -2,9 +2,14 @@ from llm import llm
 from prompts import CODER_PROMPT
 from models import GeneratedFile
 from state import ProjectState
+from agents.base_agent import BaseAgent
+from text_utils import strip_code_fences
 
 
-class CoderAgent:
+class CoderAgent(BaseAgent):
+
+    def __init__(self, llm): 
+        super().__init__(llm)
 
     def run(
         self,
@@ -28,7 +33,7 @@ class CoderAgent:
 
             generated_file = GeneratedFile(
                 path=file_path,
-                content=llm_response.content
+                content=strip_code_fences(llm_response.content)
             )
 
             state.generated_files.append(generated_file)

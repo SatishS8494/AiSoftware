@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field 
-from typing import List , Optional
+from typing import List , Optional, Literal
 
 
 class ProjectRequirement(BaseModel): 
@@ -9,6 +9,9 @@ class ProjectRequirement(BaseModel):
 class ProjectPlan(BaseModel): 
     project_name: str 
     description: str 
+    language: Literal["python", "node", "java"] = Field(
+        description="Target language/runtime. Must be one of: python, node, java."
+    )
     tech_stack: List[str] = Field(default_factory=list) 
     features: List[str] = Field(default_factory=list) 
     development_steps: List[str] = Field(default_factory=list) 

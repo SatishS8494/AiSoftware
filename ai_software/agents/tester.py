@@ -1,8 +1,7 @@
-from llm import llm
 from prompts import TESTER_PROMPT
 from models import BugReport
 from state import ProjectState
-from base_agent import BaseAgent
+from agents.base_agent import BaseAgent
 
 
 class TesterAgent(BaseAgent):

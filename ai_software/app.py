@@ -1,20 +1,5 @@
-from llm import llm 
-from logger import logger
-
-# def main(): 
-#     logger.info( "Application Started" ) 
-#     print("=" * 60) 
-#     print("🏢 AI Software Company") 
-#     print("=" * 60) 
-#     print() 
-#     print("Foundation Loaded Successfully.") 
-#     print() 
-#     print(llm.__class__.__name__) 
-
-
-from graph import graph 
-from state import ProjectState 
-from agents.coder import CoderAgent
+from graph import graph
+from state import ProjectState
 
 def main(): 
     requirement = input( "Requirement:\n" ) 
@@ -59,11 +44,11 @@ def main():
     report = result["bug_report"]
 
     print()
-    
+
     print("=" * 60)
     print("Bug Report")
     print("=" * 60)
-    
+
     print("Success :", report.success)
     print("Summary :", report.summary)
     print("Cause :", report.probable_cause)

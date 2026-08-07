@@ -1,15 +1,13 @@
-from llm import llm
-
 from prompts import REVIEWER_PROMPT
 
 from models import ReviewReport
-from base_agent import BaseAgent
+from agents.base_agent import BaseAgent
 from state import ProjectState
 
 
 class ReviewerAgent(BaseAgent):
 
-    def __init__(self):
+    def __init__(self, llm):
 
         super().__init__( llm.with_structured_output( ReviewReport ) )
 

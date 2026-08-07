@@ -1,10 +1,7 @@
 from pathlib import Path
 
 from state import ProjectState
-from tools.python_runner import PythonRunner
-
-
-runner = PythonRunner()
+from tools.language_runner import run_project
 
 
 def runner_node(
@@ -12,9 +9,8 @@ def runner_node(
 ):
 
     project_path = Path("workspace")
+    language = state.plan.language if state.plan else "python"
 
-    state.execution_result = runner.run(
-        project_path
-    )
+    state.execution_result = run_project(project_path, language)
 
     return state

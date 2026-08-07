@@ -19,4 +19,5 @@ class ProjectState(BaseModel):
     execution_result: ExecutionResult | None = None
     bug_report: BugReport | None = None
     errors: List[str] = Field( default_factory=list ) 
+    generation_success: bool = False
     completed: bool = False
