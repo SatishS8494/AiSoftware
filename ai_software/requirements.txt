@@ -1,5 +1,7 @@
 langchain 
 langchain-groq 
 langgraph 
+langgraph-checkpoint-sqlite
 python-dotenv 
 pydantic
+pydantic-settings

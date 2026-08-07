@@ -1,4 +1,10 @@
+import sqlite3
+from pathlib import Path
+
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import ( StateGraph, START, END )
+
+from config import settings
 from state import ProjectState 
 from nodes.writer import writer_node
 from nodes.queue import initialize_queue
@@ -61,4 +67,13 @@ builder.add_conditional_edges(
 
 builder.add_edge( "reviewer", END )
 
-graph = builder.compile()
+
+def _build_checkpointer() -> SqliteSaver:
+    db_path = Path(settings.checkpoint_db)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(db_path), check_same_thread=False)
+    return SqliteSaver(conn)
+
+
+checkpointer = _build_checkpointer()
+graph = builder.compile(checkpointer=checkpointer)

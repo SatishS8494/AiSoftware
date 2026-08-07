@@ -2,10 +2,12 @@ import subprocess
 import sys
 from pathlib import Path
 
+from config import settings
 from models import ExecutionResult
 
 
-RUN_TIMEOUT_SECONDS = 60
+def _run_timeout() -> int:
+    return settings.run_timeout_seconds
 
 
 def _install_result_from(step: str, r: subprocess.CompletedProcess) -> ExecutionResult:
@@ -18,6 +20,7 @@ def _install_result_from(step: str, r: subprocess.CompletedProcess) -> Execution
 
 
 def _run_with_timeout(cmd, cwd, shell=False):
+    timeout = _run_timeout()
     try:
         return subprocess.run(
             cmd,
@@ -25,14 +28,14 @@ def _run_with_timeout(cmd, cwd, shell=False):
             text=True,
             cwd=str(cwd),
             shell=shell,
-            timeout=RUN_TIMEOUT_SECONDS,
+            timeout=timeout,
         )
     except subprocess.TimeoutExpired as e:
         return subprocess.CompletedProcess(
             args=cmd,
             returncode=124,
             stdout=(e.stdout.decode() if isinstance(e.stdout, bytes) else (e.stdout or "")),
-            stderr=f"Process timed out after {RUN_TIMEOUT_SECONDS}s (likely a long-running server).",
+            stderr=f"Process timed out after {timeout}s (likely a long-running server).",
         )
 
 

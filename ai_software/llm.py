@@ -1,5 +1,11 @@
-from langchain_groq import ChatGroq 
-from config import * 
+from langchain_groq import ChatGroq
+
+from config import settings
 
 
-llm = ChatGroq( model="llama-3.1-8b-instant", temperature=0 )
+llm = ChatGroq(
+    model=settings.model_name,
+    api_key=settings.groq_api_key,
+    temperature=0,
+)
+

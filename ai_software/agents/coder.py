@@ -4,6 +4,7 @@ from models import GeneratedFile
 from state import ProjectState
 from agents.base_agent import BaseAgent
 from text_utils import strip_code_fences
+from tools.package_validator import validate_dependency_manifest
 
 
 class CoderAgent(BaseAgent):
@@ -30,10 +31,16 @@ class CoderAgent(BaseAgent):
 
         try:
             llm_response = llm.invoke(prompt)
+            content = strip_code_fences(llm_response.content)
+            content, removed = validate_dependency_manifest(file_path, content)
+            if removed:
+                state.errors.append(
+                    f"{file_path}: removed unknown packages {removed}"
+                )
 
             generated_file = GeneratedFile(
                 path=file_path,
-                content=strip_code_fences(llm_response.content)
+                content=content,
             )
 
             state.generated_files.append(generated_file)

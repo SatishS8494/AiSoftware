@@ -4,6 +4,7 @@ from prompts import FIX_PROMPT
 from state import ProjectState 
 from agents.base_agent import BaseAgent
 from text_utils import strip_code_fences
+from tools.package_validator import validate_dependency_manifest
 
 
 def _find_erroring_file(state: ProjectState):
@@ -52,7 +53,13 @@ class FixAgent(BaseAgent):
             execution=state.execution_result.model_dump_json(indent=2),
             bug_report=state.bug_report.model_dump_json(indent=2) ) 
         response = llm.invoke(prompt) 
-        generated_file.content = strip_code_fences(response.content)
+        fixed_content = strip_code_fences(response.content)
+        fixed_content, removed = validate_dependency_manifest(generated_file.path, fixed_content)
+        if removed:
+            state.errors.append(
+                f"{generated_file.path}: fixer removed unknown packages {removed}"
+            )
+        generated_file.content = fixed_content
 
         # Ensure writer_node (which writes generated_files[-1]) picks up the fixed file.
         state.generated_files.remove(generated_file)
